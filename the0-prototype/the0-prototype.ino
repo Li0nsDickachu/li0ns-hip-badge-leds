@@ -69,8 +69,21 @@ void loop() {
         delay(DELAY);
     }
     for(int dot = 0; dot < NUM_LEDS*4 + 1; dot++) {   // 1 travelling dot circling clockwise
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[dot % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
         // clear this led for the next time around the loop
@@ -80,8 +93,21 @@ void loop() {
 
     //2
     for(int dot = (NUM_LEDS - 1); dot < NUM_LEDS*5 - 1; dot++) {   // 2 travelling dots circling anti-clockwise
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
         leds[NUM_LEDS - (((dot + 8) % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
         FastLED.show();
@@ -91,8 +117,21 @@ void loop() {
         delay(DELAY);
     }
     for(int dot = 0; dot < NUM_LEDS*4 + 2; dot++) {   // 2 travelling dots circling clockwise
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[dot % NUM_LEDS] = CHSV(HUE, 255, 255);
         leds[(dot + 8) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
@@ -104,8 +143,21 @@ void loop() {
 
     //3
     for(int dot = 0; dot < 9*8 - 1; dot++) {   // 2 travelling dots down
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[dot % 9] = CHSV(HUE, 255, 255);
         leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
@@ -117,8 +169,21 @@ void loop() {
 
     //4
     for(int dot = 9*8 - 1; dot >= 0; dot--) {   // 2 travelling dots up
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[dot % 9] = CHSV(HUE, 255, 255);
         leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
@@ -130,8 +195,21 @@ void loop() {
 
     //5
     for(int dot = 0; dot < NUM_LEDS*4; dot++) {   // 2 travelling up and down
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
         leds[(dot + 1) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
@@ -143,8 +221,21 @@ void loop() {
 
     //6
     for(int dot = 0; dot < NUM_LEDS*8 + 4; dot++) {   // sparkles
-        if (RESET == 1)
-          break;
+        if (RESET == 1){
+          break;}
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
+        if (ButtonPress2 == 1){
+            HUE = ((HUE + 40) % 360);
+            Serial.println(HUE);
+            ButtonPress2 = 0;}
         RANDOM1 = random(3);
         RANDOM2 = random(16,19); // I couldn't figure out how to get random() to output 2 different numbers in a row
         leds[(dot*3 + RANDOM1)% NUM_LEDS ] = CHSV(HUE, 255, 255);
