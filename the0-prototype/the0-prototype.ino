@@ -18,12 +18,14 @@ int DELAY = 63; // standard value is 63
 int DELAY2 = 58; // section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int BRIGHTNESS = 20;
+volatile int ButtonPress1 = 0;
+volatile int ButtonPress2 = 0;
 int RANDOM1;
 int RANDOM2;
 
-
 CRGB leds[NUM_LEDS]; // Define the array of leds
- 
+
+
 void setup() { 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); // GRB is not the conventional order, had to manually edit this
     FastLED.setBrightness(BRIGHTNESS);
@@ -32,7 +34,7 @@ void setup() {
 
     // ISR setup below:
     pinMode(IR_RX_PIN, INPUT); // initialize the infrared receiver trigger pin as an input
-    // Serial.begin(9600); //start serial connection
+    Serial.begin(9600); //start serial connection
     attachInterrupt(digitalPinToInterrupt(IR_RX_PIN), IR_TRIGGER, FALLING);
     attachInterrupt(digitalPinToInterrupt(BUTTON1_PIN), BUTTON1, RISING);
     attachInterrupt(digitalPinToInterrupt(BUTTON2_PIN), BUTTON2, RISING);
@@ -43,9 +45,18 @@ void loop() {
 
     // 1
     for(int dot = (NUM_LEDS - 1); dot < NUM_LEDS*5 - 1; dot++) {   // 1 travelling dot circling anti-clockwise
-        // break; // don't forget to remove this line later
+        // break; // don't forget to comment this out
         if (RESET == 1)
           break;
+        if (ButtonPress1 == 1){
+          if (BRIGHTNESS == 20){
+            BRIGHTNESS = 255;
+            Serial.println(BRIGHTNESS);}
+          else {
+            BRIGHTNESS = 20;
+            Serial.println(BRIGHTNESS);}
+          FastLED.setBrightness(BRIGHTNESS);
+          ButtonPress1 = 0;}
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::COLOR;
         FastLED.show();
         // clear this led for the next time around the loop
@@ -150,18 +161,16 @@ void loop() {
 }
 
 void IR_TRIGGER(){
-  RESET = 1;
-  // Serial.println("reset");
+    RESET = 1;
+    // Serial.println("reset");
 }
 
 void BUTTON1(){
-  BRIGHTNESS = 20;
-  FastLED.setBrightness(BRIGHTNESS);
-  // Serial.println(BRIGHTNESS);
+    ButtonPress1 = 1;
 }
 
 void BUTTON2(){
-  BRIGHTNESS = 255;
-  FastLED.setBrightness(BRIGHTNESS);
-  // Serial.println(BRIGHTNESS);
+    BRIGHTNESS = 20;
+    FastLED.setBrightness(BRIGHTNESS);
+    // Serial.println(BRIGHTNESS);
 }
