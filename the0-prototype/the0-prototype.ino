@@ -1,18 +1,17 @@
 // Li0n, 2023
 
-// todo: -make it easy to change the color
-//       -put this code and all previous iterations on git
+// todo: -replace magic numbers
+//       -add a guide on how to modify this code to use on any esp board with neopixels
+//       -make the IR led blink at 38KhZ
 
 #include <FastLED.h> //load the fastled library
  
 #define NUM_LEDS 16 // how many leds in your strip?
-#define DATA_PIN 10 // the pin that sends rgb data to the strip
-#define IR_RX_PIN 3 // RX = receiver, IR = infrared
+#define DATA_PIN 10 // the pin that sends rgb data to the led strip
+#define IR_RX_PIN 3 // IR = infrared, RX = receiver
 #define IR_TX_PIN 7 // TX = transmitter
 #define BUTTON1_PIN 2
 #define BUTTON2_PIN 8
-
-#define COLOR Blue //set the color here
 
 int DELAY = 63; // standard value is 63
 int DELAY2 = 58; // section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
@@ -22,7 +21,7 @@ volatile int ButtonPress1 = 0;
 volatile int ButtonPress2 = 0;
 int RANDOM1;
 int RANDOM2;
-int HUE = 160;
+int HUE = 160; // standard value is 160, which is blue
 
 CRGB leds[NUM_LEDS]; // Define the array of leds
 
