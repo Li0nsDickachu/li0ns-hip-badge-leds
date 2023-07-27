@@ -3,7 +3,7 @@
 // todo: -replace magic numbers (DELAY, DELAY2)
 //       -make the IR led blink at 38KhZ
 
-// to modify the code to work on any arduino-IDE compatible board with any FastLED compatible board, check out all the comments that start with <<< and edit those lines to match your setup
+// to modify the code to work on any arduino IDE compatible board with any FastLED compatible board, check out all the comments that start with <<< and edit those lines to match your setup
 
 #include <FastLED.h> // load the fastled library
  
