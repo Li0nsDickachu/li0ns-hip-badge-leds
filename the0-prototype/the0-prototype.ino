@@ -1,21 +1,22 @@
 // Li0n, 2023
 
-// todo: -replace magic numbers
-//       -add a guide on how to modify this code to use on any esp board with neopixels
+// todo: -replace magic numbers (DELAY, DELAY2)
 //       -make the IR led blink at 38KhZ
 
-#include <FastLED.h> //load the fastled library
+// to modify the code to work on any arduino-IDE compatible board with any FastLED compatible board, check out all the comments that start with <<< and edit those lines to match your setup
+
+#include <FastLED.h> // load the fastled library
  
-#define NUM_LEDS 16 // how many leds in your strip?
-#define DATA_PIN 10 // the pin that sends rgb data to the led strip
-#define IR_RX_PIN 3 // IR = infrared, RX = receiver
-#define IR_TX_PIN 7 // TX = transmitter
-#define BUTTON1_PIN 2
-#define BUTTON2_PIN 8
+#define NUM_LEDS 16 // <<< how many leds in your strip?
+#define DATA_PIN 10 // <<< the pin that sends rgb data to the led strip
+#define IR_RX_PIN 3 // <<< IR = infrared, RX = receiver
+#define IR_TX_PIN 7 // <<< TX = transmitter
+#define BUTTON1_PIN 2 // <<<
+#define BUTTON2_PIN 8 // <<<
 
 int HUE = 160; // standard value is 160, which is blue
-int DELAY = 63; // standard value is 63
-int DELAY2 = 58; // section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
+int DELAY = 63; // <<< standard value is 63. edit DELAY and DELAY2 values to make your board sync up with different sized boards running the same animation.
+int DELAY2 = 58; // <<< section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int ButtonPress1 = 0;
@@ -47,7 +48,7 @@ if (ButtonPress1 == 1){
 
 
 void setup() { 
-    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); // GRB is not the conventional order, had to manually edit this
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); // <<< GRB is not the conventional order, had to manually edit this. look at the FastLED example sketch "Blink.ino" and "RGBCalibrate" to see what to put here if you're using different LEDS or you're seeing unexpected colors.
     FastLED.setBrightness(BRIGHTNESS);
     pinMode(IR_TX_PIN, OUTPUT); // initialize the infrared transmitter pin as output
     randomSeed(1337); // for the sparkles
@@ -92,11 +93,11 @@ void loop() {
             break;}
         BUTTONFUNC();
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
-        leds[NUM_LEDS - (((dot + 8) % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
+        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
-        leds[NUM_LEDS - (((dot + 8) % NUM_LEDS) + 1)] = CRGB::Black;
+        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = CRGB::Black;
         delay(DELAY);
     }
     for(int dot = 0; dot < NUM_LEDS*4 + 2; dot++) {   // 2 travelling dots circling clockwise
@@ -104,39 +105,39 @@ void loop() {
             break;}
         BUTTONFUNC();
         leds[dot % NUM_LEDS] = CHSV(HUE, 255, 255);
-        leds[(dot + 8) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % NUM_LEDS] = CRGB::Black;
-        leds[(dot + 8) % NUM_LEDS] = CRGB::Black;
+        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = CRGB::Black;
         delay(DELAY);
     }
 
     //3
-    for(int dot = 0; dot < 9*8 - 1; dot++) {   // 2 travelling dots down
+    for(int dot = 0; dot < ((NUM_LEDS/2) + 1)*8 - 1; dot++) {   // 2 travelling dots down
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % 9] = CHSV(HUE, 255, 255);
-        leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % ((NUM_LEDS/2) + 1)] = CHSV(HUE, 255, 255);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[dot % 9] = CRGB::Black;
-        leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CRGB::Black;
+        leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
         delay(DELAY2);
     }
 
     //4
-    for(int dot = 9*8 - 1; dot >= 0; dot--) {   // 2 travelling dots up
+    for(int dot = ((NUM_LEDS/2) + 1)*8 - 1; dot >= 0; dot--) {   // 2 travelling dots up
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % 9] = CHSV(HUE, 255, 255);
-        leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % ((NUM_LEDS/2) + 1)] = CHSV(HUE, 255, 255);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CHSV(HUE, 255, 255);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[dot % 9] = CRGB::Black;
-        leds[(NUM_LEDS - (dot % 9)) % NUM_LEDS] = CRGB::Black;
+        leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
         delay(DELAY2);
     }
 
@@ -178,6 +179,8 @@ void loop() {
     // Serial.println("IR pulse sent");
 
 }
+
+// ISRs below here:
 
 void IR_TRIGGER(){
     RESET = 1;
