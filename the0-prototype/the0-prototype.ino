@@ -13,15 +13,16 @@
 #define BUTTON1_PIN 2
 #define BUTTON2_PIN 8
 
+int HUE = 160; // standard value is 160, which is blue
 int DELAY = 63; // standard value is 63
 int DELAY2 = 58; // section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
+
 volatile int RESET = 0; // volatile has to be specified because of the ISR
-volatile int BRIGHTNESS = 20;
 volatile int ButtonPress1 = 0;
 volatile int ButtonPress2 = 0;
+int BRIGHTNESS = 20;
 int RANDOM1;
 int RANDOM2;
-int HUE = 160; // standard value is 160, which is blue
 
 CRGB leds[NUM_LEDS]; // Define the array of leds
 
