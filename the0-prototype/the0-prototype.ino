@@ -2,6 +2,9 @@
 
 // todo: -replace magic numbers (DELAY, DELAY2)
 //       -make the IR led blink at 38KhZ
+//       -give it a rainbow mode
+//       -make a separate version of this program that detects how far ahead or behind it is and edits the delay time to catch up. optionally merge that version later.
+//       -make the ESPs use short range bluetooth as backup sync method
 
 // to modify the code to work on any arduino IDE compatible board with any FastLED compatible board, check out all the comments that start with <<< and edit those lines to match your setup
 
