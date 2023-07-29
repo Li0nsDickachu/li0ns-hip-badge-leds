@@ -29,8 +29,8 @@ int RANDOM2;
 
 //IR_TX functions
 unsigned long previous_time = 0;
-int blink_length = 25; // value in millis
-int blink_period = 13; // the correct value would be 13.1578947368. for a frequency of 38KhZ, the led needs to turn on and off every 26.315789473684 microseconds so it needs to switch states twice in that time.
+const int blink_length = 25; // value in millis
+const int blink_period = 13; // the correct value would be 13.1578947368. for a frequency of 38KhZ, the led needs to turn on and off every 26.315789473684 microseconds so it needs to switch states twice in that time.
 
 
 CRGB leds[NUM_LEDS]; // Define the array of leds
