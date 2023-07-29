@@ -1,7 +1,6 @@
 // Li0n, 2023
 
-// todo: -replace magic numbers (DELAY, DELAY2)
-//       -add more palettes
+// todo: -add more palettes
 //       -make a separate version of this program that detects how far ahead or behind it is and edits the delay time to catch up. optionally merge that version later.
 //       -make the ESPs use short range bluetooth as backup sync method
 
@@ -17,8 +16,8 @@
 #define BUTTON2_PIN 8 // <<<
 
 int index_number = 160; // standard value is 160, which is blue. edit to change default blink color.
-int DELAY = 63; // <<< standard value is 63. edit DELAY and DELAY2 values to make your board sync up with different sized boards running the same animation.
-int DELAY2 = 58; // <<< standard value is 58. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
+int DELAY = (1008/NUM_LEDS); // standard value is 1008. edit DELAY and DELAY2 values if your board is not running in sync with another. desync can be caused by hardware differences, differnce in board shape/size, or timer calibration.
+int DELAY2 = (928/NUM_LEDS); // standard value is 928. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int ButtonPress1 = 0;
