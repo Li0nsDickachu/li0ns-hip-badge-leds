@@ -17,7 +17,7 @@
 #define BUTTON1_PIN 2 // <<<
 #define BUTTON2_PIN 8 // <<<
 
-int HUE = 160; // standard value is 160, which is blue
+int HUE = 160; // standard value is 160, which is blue. edit to change default blink color.
 int DELAY = 63; // <<< standard value is 63. edit DELAY and DELAY2 values to make your board sync up with different sized boards running the same animation.
 int DELAY2 = 58; // <<< section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 
@@ -27,6 +27,12 @@ volatile int ButtonPress2 = 0;
 int BRIGHTNESS = 20;
 int RANDOM1;
 int RANDOM2;
+
+//IR_TX functions
+unsigned long previous_time = 0;
+int blink_length = 25; // value in millis
+int blink_period = 13; // the correct value would be 13.1578947368. for a frequency of 38KhZ, the led needs to turn on and off every 26.315789473684 microseconds so it needs to switch states twice in that time.
+
 
 CRGB leds[NUM_LEDS]; // Define the array of leds
 
@@ -173,14 +179,23 @@ void loop() {
         leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = CRGB::Black;
         delay(DELAY);
     }
-    FastLED.show();
-    //send IR pulse
-    digitalWrite(IR_TX_PIN, HIGH);
-    // Serial.println("sending IR pulse");
-    delay(25);
-    digitalWrite(IR_TX_PIN, LOW);
-    // Serial.println("IR pulse sent");
 
+    FastLED.show();
+
+
+    //send IR pulse
+    for (unsigned long start_blink = millis(); millis() < start_blink + blink_length;) {
+        if (micros() > previous_time + blink_period) {
+            previous_time = micros();
+            if (digitalRead(IR_TX_PIN) == LOW) {
+                digitalWrite(IR_TX_PIN, HIGH);
+            }
+            else {
+                digitalWrite(IR_TX_PIN, LOW);
+            }
+        }
+    }
+    // Serial.println("IR pulse sent");
 }
 
 // ISRs below here:
