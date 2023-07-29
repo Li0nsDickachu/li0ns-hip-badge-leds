@@ -1,7 +1,7 @@
 // Li0n, 2023
 
 // todo: -replace magic numbers (DELAY, DELAY2)
-//       -improve rainbow color palette
+//       -add more palettes
 //       -make a separate version of this program that detects how far ahead or behind it is and edits the delay time to catch up. optionally merge that version later.
 //       -make the ESPs use short range bluetooth as backup sync method
 
@@ -16,7 +16,7 @@
 #define BUTTON1_PIN 2 // <<<
 #define BUTTON2_PIN 8 // <<<
 
-int HUE = 160; // standard value is 160, which is blue. edit to change default blink color.
+int index_number = 160; // standard value is 160, which is blue. edit to change default blink color.
 int DELAY = 63; // <<< standard value is 63. edit DELAY and DELAY2 values to make your board sync up with different sized boards running the same animation.
 int DELAY2 = 58; // <<< standard value is 58. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 
@@ -59,12 +59,12 @@ void BUTTONFUNC(){
         ButtonPress1 = 0;
     }
     if (ButtonPress2 == 1) {
-        HUE = ((HUE + 40) % 360);
-        // Serial.println(HUE);
+        index_number = ((index_number + 16) % 256);
+        // Serial.println(index_number);
         ButtonPress2 = 0;
     }
     if (rainbow_mode == 1) {
-        HUE = ((HUE + 40) % 360);
+        index_number = ((index_number + 16) % 256);
         // Serial.println(rainbow_mode);
     }
 }
@@ -93,7 +93,7 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -103,7 +103,7 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % NUM_LEDS] = CRGB::Black;
@@ -115,8 +115,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
-        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -127,8 +127,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % NUM_LEDS] = CHSV(HUE, 255, 255);
-        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % NUM_LEDS] = CRGB::Black;
@@ -141,8 +141,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = CHSV(HUE, 255, 255);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
@@ -155,8 +155,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = CHSV(HUE, 255, 255);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
@@ -169,8 +169,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CHSV(HUE, 255, 255);
-        leds[(dot + 1) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[(dot + 1) % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -185,8 +185,8 @@ void loop() {
         BUTTONFUNC();
         RANDOM1 = random(3);
         RANDOM2 = random(16,19); // I couldn't figure out how to get random() to output 2 different numbers in a row
-        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = CHSV(HUE, 255, 255);
-        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = CHSV(HUE, 255, 255);
+        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
+        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(RainbowColors_p, index_number, 255, NOBLEND);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[(dot*3 + RANDOM1)% NUM_LEDS ] = CRGB::Black;
