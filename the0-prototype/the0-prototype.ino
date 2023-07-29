@@ -1,7 +1,7 @@
 // Li0n, 2023
 
 // todo: -replace magic numbers (DELAY, DELAY2)
-//       -give it a rainbow mode
+//       -improve rainbow color palette
 //       -make a separate version of this program that detects how far ahead or behind it is and edits the delay time to catch up. optionally merge that version later.
 //       -make the ESPs use short range bluetooth as backup sync method
 
@@ -18,12 +18,13 @@
 
 int HUE = 160; // standard value is 160, which is blue. edit to change default blink color.
 int DELAY = 63; // <<< standard value is 63. edit DELAY and DELAY2 values to make your board sync up with different sized boards running the same animation.
-int DELAY2 = 58; // <<< section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
+int DELAY2 = 58; // <<< standard value is 58. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
 
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int ButtonPress1 = 0;
 volatile int ButtonPress2 = 0;
 int BRIGHTNESS = 20;
+int rainbow_mode = 0;
 int RANDOM1;
 int RANDOM2;
 
@@ -36,21 +37,35 @@ int blink_period = 13; // the correct value would be 13.1578947368. for a freque
 CRGB leds[NUM_LEDS]; // Define the array of leds
 
 void BUTTONFUNC(){
-if (ButtonPress1 == 1){
-    if (BRIGHTNESS == 20){
-        BRIGHTNESS = 255;
-        Serial.println(BRIGHTNESS);
+    if (ButtonPress1 == 1){
+        if (ButtonPress2 == 1){
+            if (rainbow_mode == 0) {
+                rainbow_mode = 1;
+            }
+            else {
+                rainbow_mode = 0;
+            }
+        }
+        else {
+            if (BRIGHTNESS == 20){
+                BRIGHTNESS = 255;
+            }
+            else {
+                BRIGHTNESS = 20;
+            }
+            // Serial.println(BRIGHTNESS);
+            FastLED.setBrightness(BRIGHTNESS);
+        }
+        ButtonPress1 = 0;
     }
-    else {
-        BRIGHTNESS = 20;
-        Serial.println(BRIGHTNESS);
-    }
-    FastLED.setBrightness(BRIGHTNESS);
-    ButtonPress1 = 0;}
-    if (ButtonPress2 == 1){
+    if (ButtonPress2 == 1) {
         HUE = ((HUE + 40) % 360);
-        Serial.println(HUE);
+        // Serial.println(HUE);
         ButtonPress2 = 0;
+    }
+    if (rainbow_mode == 1) {
+        HUE = ((HUE + 40) % 360);
+        // Serial.println(rainbow_mode);
     }
 }
 
