@@ -36,24 +36,7 @@ const int blink_period = 13; // the correct value would be 13.1578947368. for a 
 
 CRGB leds[NUM_LEDS]; // Define the array of leds
 CRGBPalette16 current_palette = RainbowColors_p;
-
-void PALETTEFUNC(){
-    if (rainbow_mode == 1) {
-        rainbow_mode = 0;
-        index_number = 160;
-        if (palette_index == 0) {
-            current_palette = OceanColors_p;
-        }
-        else {
-            current_palette = RainbowColors_p;
-        }
-        palette_index = ((palette_index + 1) % 2);
-        Serial.println(palette_index);
-        }
-    else {
-      rainbow_mode = 1;
-    }
-}
+TBlendType    currentBlending = NOBLEND;
 
 void BUTTONFUNC(){
     if (ButtonPress1 == 1){
@@ -69,21 +52,77 @@ void BUTTONFUNC(){
             ButtonPress2 = 0;
         }
         else {
-            PALETTEFUNC();  // change current palette
+            if (rainbow_mode == 0) {
+                rainbow_mode = 1;
+            }
+            else {
+                rainbow_mode = 0;
+                PALETTEFUNC();  // change current palette
+            }
         }
         ButtonPress1 = 0;
     }
     if (ButtonPress2 == 1) {
-        index_number = ((index_number + 16) % 256);  // cycle through the colors of the pallete, once per button press
-        // Serial.println(index_number);
-        ButtonPress2 = 0;
+        if (rainbow_mode == 0) {
+            index_number = ((index_number + 16) % 256);  // cycle through the colors of the pallete, once per button press
+            // Serial.println(index_number);
+            ButtonPress2 = 0;
+        }
+        else {
+            rainbow_mode = rainbow_mode + (rainbow_mode % 2);
+            if (rainbow_mode == 1) {
+              currentBlending = NOBLEND;
+            }
+            if (rainbow_mode == 2) {
+              currentBlending = LINEARBLEND;
+            }
+        }
     }
     if (rainbow_mode == 1) {
         index_number = ((index_number + 16) % 256); // cycle through the palette, once per dot loop
         // Serial.println(rainbow_mode);
     }
+    if (rainbow_mode == 2) {
+        index_number = ((index_number + 1) % 256); // cycle through the palette, once per dot loop
+        // Serial.println(rainbow_mode);
+    }
 }
 
+void PALETTEFUNC(){
+    index_number = 0;
+    palette_index = ((palette_index + 1) % 5);
+    Serial.println(palette_index);
+    if (palette_index == 0) {
+        index_number = 160;
+        current_palette = RainbowColors_p;
+    }
+    if (palette_index == 1) {
+        SetupPinkandBluePalette();
+    }
+    if (palette_index == 2) {
+        current_palette = ForestColors_p;
+    }
+    if (palette_index == 3) {
+        current_palette = CloudColors_p;
+    }
+    if (palette_index == 4) {
+        current_palette = OceanColors_p;
+    }
+}
+
+void SetupPinkandBluePalette()
+{
+    CRGB lightblue = CRGB::Cyan;
+    CRGB pink  = CRGB::Magenta;
+    CRGB white  = CRGB::White;
+    
+    current_palette = CRGBPalette16(
+        lightblue,  pink,  white,  pink,
+        lightblue,  pink,  white,  pink,
+        lightblue,  pink,  white,  pink,
+        lightblue,  pink,  white,  pink
+    );
+}
 
 void setup() { 
     FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); // <<< GRB is not the conventional order, had to manually edit this. look at the FastLED example sketch "Blink.ino" and "RGBCalibrate" to see what to put here if you're using different LEDS or you're seeing unexpected colors.
@@ -108,7 +147,7 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -118,7 +157,7 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % NUM_LEDS] = CRGB::Black;
@@ -130,8 +169,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -142,8 +181,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % NUM_LEDS] = CRGB::Black;
@@ -156,8 +195,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
@@ -170,8 +209,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
@@ -184,8 +223,8 @@ void loop() {
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[(dot + 1) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot + 1) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
@@ -200,8 +239,8 @@ void loop() {
         BUTTONFUNC();
         RANDOM1 = random(3);
         RANDOM2 = random(16,19); // I couldn't figure out how to get random() to output 2 different numbers in a row
-        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
-        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, NOBLEND);
+        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
         leds[(dot*3 + RANDOM1)% NUM_LEDS ] = CRGB::Black;
