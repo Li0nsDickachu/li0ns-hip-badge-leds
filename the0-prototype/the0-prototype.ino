@@ -15,6 +15,7 @@
 #define BUTTON1_PIN 2 // <<<
 #define BUTTON2_PIN 8 // <<<
 
+int x = 0; // <<< offset
 int index_number = 160; // standard value is 160, which is blue. edit to change default blink color.
 int DELAY = (1008/NUM_LEDS); // standard value is 1008. edit DELAY and DELAY2 values if your board is not running in sync with another. desync can be caused by hardware differences, differnce in board shape/size, or timer calibration.
 int DELAY2 = (928/NUM_LEDS); // standard value is 928. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
@@ -142,7 +143,7 @@ void loop() {
     RESET = 0;
 
     // 1
-    for(int dot = (NUM_LEDS - 1); dot < NUM_LEDS*5 - 1; dot++) {   // 1 travelling dot circling anti-clockwise
+    for(int dot = NUM_LEDS - 1 - x; dot < NUM_LEDS*5 - 1 - x; dot++) {   // 1 travelling dot circling anti-clockwise
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
@@ -153,7 +154,8 @@ void loop() {
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
         delay(DELAY);
     }
-    for(int dot = 0; dot < NUM_LEDS*4 + 1; dot++) {   // 1 travelling dot circling clockwise
+    for(int dot = NUM_LEDS + x; dot < NUM_LEDS*5 + 1 + x; dot++) {   // 1 travelling dot circling clockwise
+        // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
         BUTTONFUNC();
@@ -165,7 +167,8 @@ void loop() {
     }
 
     //2
-    for(int dot = (NUM_LEDS - 1); dot < NUM_LEDS*5 - 1; dot++) {   // 2 travelling dots circling anti-clockwise
+    for(int dot = NUM_LEDS - 1 - x; dot < NUM_LEDS*5 - 1 - x; dot++) {   // 2 travelling dots circling anti-clockwise
+        // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
         BUTTONFUNC();
@@ -177,7 +180,8 @@ void loop() {
         leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = CRGB::Black;
         delay(DELAY);
     }
-    for(int dot = 0; dot < NUM_LEDS*4 + 2; dot++) {   // 2 travelling dots circling clockwise
+    for(int dot = NUM_LEDS - x; dot < - x + NUM_LEDS*5 + 1; dot++) {   // 2 travelling dots circling clockwise
+        // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
         BUTTONFUNC();
@@ -192,43 +196,45 @@ void loop() {
 
     //3
     for(int dot = 0; dot < ((NUM_LEDS/2) + 1)*8 - 1; dot++) {   // 2 travelling dots down
+        // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
+        leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = CRGB::Black;
+        leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
         delay(DELAY2);
     }
 
     //4
     for(int dot = ((NUM_LEDS/2) + 1)*8 - 1; dot >= 0; dot--) {   // 2 travelling dots up
+        // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[dot % ((NUM_LEDS/2) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[dot % ((NUM_LEDS/2) + 1)] = CRGB::Black;
-        leds[(NUM_LEDS - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
+        leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = CRGB::Black;
+        leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = CRGB::Black;
         delay(DELAY2);
     }
 
     //5
-    for(int dot = 0; dot < NUM_LEDS*4; dot++) {   // 2 travelling dots up and down
+    for(int dot = 1; dot < NUM_LEDS*4 + 1; dot++) {   // 2 travelling dots up and down
         if (RESET == 1){
             break;}
         BUTTONFUNC();
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
-        leds[(dot + 1) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[((NUM_LEDS + x - (dot % NUM_LEDS)) % NUM_LEDS)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = CRGB::Black;
-        leds[(dot + 1) % NUM_LEDS] = CRGB::Black;
+        leds[((NUM_LEDS + x - (dot % NUM_LEDS)) % NUM_LEDS)] = CRGB::Black;
+        leds[(dot + x) % NUM_LEDS] = CRGB::Black;
         delay(DELAY);
     }
 
@@ -239,12 +245,12 @@ void loop() {
         BUTTONFUNC();
         RANDOM1 = random(3);
         RANDOM2 = random(16,19); // I couldn't figure out how to get random() to output 2 different numbers in a row
-        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
-        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot*3 + x + RANDOM1)% NUM_LEDS ] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[(dot*3 + x + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[(dot*3 + RANDOM1)% NUM_LEDS ] = CRGB::Black;
-        leds[(dot*3 + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = CRGB::Black;
+        leds[(dot*3 + x + RANDOM1)% NUM_LEDS ] = CRGB::Black;
+        leds[(dot*3 + x + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = CRGB::Black;
         delay(DELAY);
     }
 
