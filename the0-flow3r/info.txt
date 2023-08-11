@@ -1,0 +1,30 @@
+leds: 40x WS2812C-2020-V1
+
+the numbering system for these leds is absolutely insane. but it doesn't matter.
+
+this mysterious SYS pin is connected in parallel to 4 sets of 10 leds. could it be the spi clock?
+
+they're connected to these traces:
+LED_SDO --> 14 --> J14 (right)
+SYS --> 13 --> J13 (lef)
+GND2 --> 11/15 --> J13 (left)
+
+as I expected, J13 and J14 are connectors that connect the top and bottom pcb to each other.
+
+J13 connects to J8
+J14 connects to J9
+
+LED_SDO --> 14 --> 	J14 --> J9 --> 14 --> LED_SDO
+SYS 	--> 13 --> 	J13 --> J8 --> 13 --> LED_POWER
+GND2 	--> 11/15 --> 	J13 --> J8 --> 11/15 --> mysterious arrow symbol (I assume this means ground)
+
+if this arrow means ground, then all of these labels also mean ground:
+GND, GNDA, GND2, SHIELD
+
+continuation:
+
+LED_SDO --> 22 --> GPIO14/TOUCH14/ADC2_CH3/FSPIWP/FSPIDQS/SUBSPIWP --> ESP32-S3-WROOM-1
+
+LED_POWER --> 1 --> OUT --> U14 (SY6280AAAC)
+
+the led strip data in starts on the bottom of the right petal, and goes down and around. this means I will have to shift the whole pattern around.
