@@ -28,3 +28,34 @@ LED_SDO --> 22 --> GPIO14/TOUCH14/ADC2_CH3/FSPIWP/FSPIDQS/SUBSPIWP --> ESP32-S3-
 LED_POWER --> 1 --> OUT --> U14 (SY6280AAAC)
 
 the led strip data in starts on the bottom of the right petal, and goes down and around. this means I will have to shift the whole pattern around.
+
+the round screen is described in the documentation as "compatible with GC9A01"
+
+the connector has 18 pins? and something called MP
+
+1
+2 LEDK --> LCD_BL --> J13/J8--> GPIO46	<< TFT_BL?	<< 46, backlight
+3
+4
+5 TP_RST --> GPIO pin of AD7147-1 captouch chip
+6 TP_INT --> 
+7 I2C_SDA --> GPIO2/TOUCH2/ADC1_CH1	<< TFT_MOSI?
+8 I2C_SCL --> GPIO1/TOUCH1/ADC1_CH0	<< TFT_SCLK?
+9
+10 LCD_TE --> MTCK/GPIO39/CLK_OUT3/SUBSPICS1
+11 LCD_SDO --> MTMS/GPIO42				<< 42, mosi
+12 LCD_CD --> GPIO38/FSPIWP/SUBSPIWP	<< TFT_DC?	<< 38, dc
+13 LCD_CKO --> MTDI/GPIO41/CLK_OUT1			<< 41, sck
+14 LCD_CS --> MTDO/GPIO40/CLK_OUT2	<< TFT_CS	<< 40, cs
+15 LCD_RST --> P3 of chip U7: MAX7321ATE<< TFT_RST?
+16
+17
+18
+MP
+
+3, 9, 18, MP are all connected to GND
+1, 4, 16, 17 are connected to something that has 3.3v on one side, and a C1 connecting to GND.
+
+LEDK goes through R1 to a mosfet, which connects to GND and LCD_BL. LCD_BL --> GPIO46
+
+I2C_SDA and I2C_SCL lead to a bunch of different points. so I'm writing down the endpoints that end in the esp32.
