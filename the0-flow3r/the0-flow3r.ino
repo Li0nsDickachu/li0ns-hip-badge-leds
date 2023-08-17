@@ -9,7 +9,7 @@
 #include <FastLED.h> // load the fastled library
  
 #define NUM_LEDS 40 // <<< how many leds in your strip?
-#define DATA_PIN 4 // <<< the pin that sends rgb data to the led strip
+#define DATA_PIN 14 // <<< the pin that sends rgb data to the led strip
 // #define IR_RX_PIN 3 // <<< IR = infrared, RX = receiver
 // #define IR_TX_PIN 7 // <<< TX = transmitter
 // #define BUTTON1_PIN 2 // <<<
@@ -23,7 +23,7 @@ int DELAY2 = (928/NUM_LEDS); // standard value is 928. section 3 and 4 have 1 ex
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int ButtonPress1 = 0;
 volatile int ButtonPress2 = 0;
-int BRIGHTNESS = 20;
+int BRIGHTNESS = 255;
 int rainbow_mode = 0;
 int palette_index = 0;
 int RANDOM1;
@@ -126,20 +126,21 @@ void SetupPinkandBluePalette()
 }
 
 void setup() { 
-    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS); // <<< GRB is not the conventional order, had to manually edit this. look at the FastLED example sketch "Blink.ino" and "RGBCalibrate" to see what to put here if you're using different LEDS or you're seeing unexpected colors.
+    FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, NUM_LEDS); // <<< GRB is not the conventional order, had to manually edit this. look at the FastLED example sketch "Blink.ino" and "RGBCalibrate" to see what to put here if you're using different LEDS or you're seeing unexpected colors.
     FastLED.setBrightness(BRIGHTNESS);
     // pinMode(IR_TX_PIN, OUTPUT); // initialize the infrared transmitter pin as output
     randomSeed(1337); // for the sparkles
 
     // ISR setup below:
     // pinMode(IR_RX_PIN, INPUT); // initialize the infrared receiver trigger pin as an input
-    // Serial.begin(9600); //start serial connection
+    Serial.begin(115200); //start serial connection
     // attachInterrupt(digitalPinToInterrupt(IR_RX_PIN), IR_TRIGGER, FALLING);
     // attachInterrupt(digitalPinToInterrupt(BUTTON1_PIN), BUTTON1, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUTTON2_PIN), BUTTON2, RISING);
 }
 
 void loop() {
+    Serial.println("lion-start");
     RESET = 0;
 
     // 1
@@ -255,7 +256,7 @@ void loop() {
     }
 
     FastLED.show();
-
+}
 
     //send IR pulse
 /*    for (unsigned long start_blink = millis(); millis() < start_blink + blink_length;) {
