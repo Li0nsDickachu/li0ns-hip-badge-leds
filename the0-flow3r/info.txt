@@ -59,3 +59,39 @@ MP
 LEDK goes through R1 to a mosfet, which connects to GND and LCD_BL. LCD_BL --> GPIO46
 
 I2C_SDA and I2C_SCL lead to a bunch of different points. so I'm writing down the endpoints that end in the esp32.
+
+-------------------------------------
+
+I2C addresses, according to the kicad files:
+port expander 1: 	0b1101110
+port expander 2: 	0b1101101
+audio: 			0b0010000
+captouch bot: 		0b0101100
+captouch top: 		0b0101101
+
+--------
+
+captouch info:
+
+The AD7147 requires a companion algorithm that runs on the
+host or another microcontroller to implement high resolution
+sensor functions, such as scroll bars or wheels. However, no
+companion algorithm is required to implement buttons. Button
+sensors are implemented on chip, entirely in digital logic.
+
+A square wave excitation signal is applied to CINx during
+the conversion, and the modulator continuously samples the
+charge going through CINx. The output of the modulator is
+processed via a digital filter, and the resulting digital data is
+stored in the CDC_RESULT_Sx registers for each conversion
+stage, at Address 0x00B to Address 0x016.
+
+pinout:
+13 - SDA - I2C Serial Data Input/Output. SDA requires pull-up resistor.
+14 - ADD0 - I2C Address Bit 0.
+15 - SCLK - Clock Input for Serial Interface.
+16 - ADD1 - I2C Address Bit 1.
+17 - INT - General-Purpose Open-Drain Interrupt Output. Programmable polarity; requires pull-up resistor.
+
+
+
