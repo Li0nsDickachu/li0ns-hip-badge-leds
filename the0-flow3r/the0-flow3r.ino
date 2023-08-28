@@ -19,6 +19,7 @@ int x = 29; // <<< offset
 int index_number = 160; // standard value is 160, which is blue. edit to change default blink color.
 int DELAY = (1008/NUM_LEDS); // standard value is 1008. edit DELAY and DELAY2 values if your board is not running in sync with another. desync can be caused by hardware differences, differnce in board shape/size, or timer calibration.
 int DELAY2 = (928/NUM_LEDS); // standard value is 928. section 3 and 4 have 1 extra dot in the sequence, so it needs to move faster to keep up.
+int DELAY3 = (1750/NUM_LEDS);
 
 volatile int RESET = 0; // volatile has to be specified because of the ISR
 volatile int ButtonPress1 = 0;
@@ -28,6 +29,7 @@ int rainbow_mode = 0;
 int palette_index = 0;
 int RANDOM1;
 int RANDOM2;
+int cycle;
 
 //IR_TX functions
 // unsigned long previous_time = 0;
@@ -133,7 +135,7 @@ void setup() {
 
     // ISR setup below:
     // pinMode(IR_RX_PIN, INPUT); // initialize the infrared receiver trigger pin as an input
-    Serial.begin(115200); //start serial connection
+    // Serial.begin(115200); //start serial connection
     // attachInterrupt(digitalPinToInterrupt(IR_RX_PIN), IR_TRIGGER, FALLING);
     // attachInterrupt(digitalPinToInterrupt(BUTTON1_PIN), BUTTON1, RISING);
     // attachInterrupt(digitalPinToInterrupt(BUTTON2_PIN), BUTTON2, RISING);
@@ -143,12 +145,15 @@ void loop() {
     Serial.println("lion-start");
     RESET = 0;
 
+    //buttonless setup:
+    rainbow_mode = 2;
+
     // 1
     for(int dot = NUM_LEDS - 1 - x; dot < NUM_LEDS*5 - 1 - x; dot++) {   // 1 travelling dot circling anti-clockwise
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
@@ -159,7 +164,7 @@ void loop() {
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
@@ -172,7 +177,7 @@ void loop() {
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[NUM_LEDS - ((dot % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         leds[NUM_LEDS - (((dot + (NUM_LEDS/2)) % NUM_LEDS) + 1)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
@@ -185,7 +190,7 @@ void loop() {
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[dot % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         leds[(dot + (NUM_LEDS/2)) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
@@ -200,7 +205,7 @@ void loop() {
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
@@ -215,7 +220,7 @@ void loop() {
         // break; // don't forget to comment this out
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[((dot % ((NUM_LEDS/2) + 1)) + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         leds[(NUM_LEDS + x - (dot % ((NUM_LEDS/2) + 1))) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
@@ -229,7 +234,7 @@ void loop() {
     for(int dot = 1; dot < NUM_LEDS*4 + 1; dot++) {   // 2 travelling dots up and down
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
+        BUTTONFUNC();
         leds[((NUM_LEDS + x - (dot % NUM_LEDS)) % NUM_LEDS)] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         leds[(dot + x) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
@@ -240,22 +245,26 @@ void loop() {
     }
 
     //6
-    for(int dot = 0; dot < NUM_LEDS*8 + 4; dot++) {   // sparkles
+    for(int dot = 0; dot < NUM_LEDS*6 + 4; dot++) {   // sparkles
         if (RESET == 1){
             break;}
-        // BUTTONFUNC();
-        RANDOM1 = random(3);
-        RANDOM2 = random(16,19); // I couldn't figure out how to get random() to output 2 different numbers in a row
-        leds[(dot*3 + x + RANDOM1)% NUM_LEDS ] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
-        leds[(dot*3 + x + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        BUTTONFUNC();
+        RANDOM1 = (random(19) + 29) % 40;
+        RANDOM2 = (random(20, 39) + 29) % 40;
+        leds[RANDOM1] = ColorFromPalette(current_palette, index_number, 255, currentBlending);
+        leds[RANDOM2]= ColorFromPalette(current_palette, index_number, 255, currentBlending);
         FastLED.show();
         // clear this led for the next time around the loop
-        leds[(dot*3 + x + RANDOM1)% NUM_LEDS ] = CRGB::Black;
-        leds[(dot*3 + x + (NUM_LEDS/2)+ RANDOM2) % NUM_LEDS] = CRGB::Black;
-        delay(DELAY);
+        leds[RANDOM1] = CRGB::Black;
+        leds[RANDOM2] = CRGB::Black;
+        delay(DELAY3);
     }
 
     FastLED.show();
+    if (cycle == 3) {
+        PALETTEFUNC();
+    }
+    cycle = ((cycle + 1) % 4);
 }
 
     //send IR pulse
