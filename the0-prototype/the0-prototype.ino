@@ -39,6 +39,10 @@ CRGB leds[NUM_LEDS]; // Define the array of leds
 CRGBPalette16 current_palette = RainbowColors_p;
 TBlendType    currentBlending = NOBLEND;
 
+// button 1: change rainbow mode between on and off, and change pallete every other press
+// button 2: if rainbow mode is off, change color. if rainbow mode is on, switch rainbow mode.
+// button 1 and 2: adjust brightness
+
 void BUTTONFUNC(){
     if (ButtonPress1 == 1){
         if (ButtonPress2 == 1){
@@ -61,16 +65,15 @@ void BUTTONFUNC(){
                 PALETTEFUNC();  // change current palette
             }
         }
-        ButtonPress1 = 0;
+    ButtonPress1 = 0;
     }
     if (ButtonPress2 == 1) {
         if (rainbow_mode == 0) {
             index_number = ((index_number + 16) % 256);  // cycle through the colors of the pallete, once per button press
             // Serial.println(index_number);
-            ButtonPress2 = 0;
         }
         else {
-            rainbow_mode = rainbow_mode + (rainbow_mode % 2);
+            rainbow_mode = rainbow_mode + (rainbow_mode % 2); // change rainbow mode between 1 and 2
             if (rainbow_mode == 1) {
               currentBlending = NOBLEND;
             }
@@ -78,6 +81,7 @@ void BUTTONFUNC(){
               currentBlending = LINEARBLEND;
             }
         }
+    ButtonPress2 = 0;
     }
     if (rainbow_mode == 1) {
         index_number = ((index_number + 16) % 256); // cycle through the palette, once per dot loop
